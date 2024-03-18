@@ -1,6 +1,8 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
+import base64
+from io import BytesIO
 from ImageCryptography import *
 
 def main():
@@ -22,26 +24,30 @@ def main():
                 encrypted_image = encrypt_image(uploaded_file, public_key)
 
                 # Save encrypted image
-                encrypted_image_path = "encrypted_image.png"
-                Image.fromarray(encrypted_image.astype(np.uint8)).save(encrypted_image_path)
+                encrypted_image_base64 = save_base64_image(encrypted_image)
                 st.success("Image encrypted successfully.")
 
+                # Display encrypted image
+                st.image(encrypted_image, caption="Encrypted Image", use_column_width=True)
+
                 # Provide download link for encrypted image
-                st.markdown(get_download_link(encrypted_image_path, "Download Encrypted Image"), unsafe_allow_html=True)
+                st.markdown(get_download_link(encrypted_image_base64, "Download Encrypted Image"), unsafe_allow_html=True)
 
         decrypt_button = st.button("Decrypt Image")
         if decrypt_button:
             with st.spinner("Decrypting..."):
                 # Perform decryption
-                decrypted_image = decrypt_image(encrypted_image, private_key)
+                decrypted_image = decrypt_image(encrypted_image, public_key, private_key)
 
                 # Save decrypted image
-                decrypted_image_path = "decrypted_image.png"
-                Image.fromarray(decrypted_image.astype(np.uint8)).save(decrypted_image_path)
+                decrypted_image_base64 = save_base64_image(decrypted_image)
                 st.success("Image decrypted successfully.")
 
+                # Display decrypted image
+                st.image(decrypted_image, caption="Decrypted Image", use_column_width=True)
+
                 # Provide download link for decrypted image
-                st.markdown(get_download_link(decrypted_image_path, "Download Decrypted Image"), unsafe_allow_html=True)
+                st.markdown(get_download_link(decrypted_image_base64, "Download Decrypted Image"), unsafe_allow_html=True)
 
 def encrypt_image(input_image, public_key):
     image = Image.open(input_image)
@@ -49,14 +55,18 @@ def encrypt_image(input_image, public_key):
     encrypted_image = ImgEncrypt(public_key, image_array)
     return encrypted_image
 
-def decrypt_image(encrypted_image, private_key):
+def decrypt_image(encrypted_image, public_key, private_key):
     decrypted_image = ImgDecrypt(public_key, private_key, encrypted_image)
     return decrypted_image
 
-def get_download_link(file_path, text):
-    with open(file_path, "rb") as file:
-        data = file.read()
-    href = f"<a href='data:file/png;base64,{data.decode('latin-1')}' download='{file_path}'>{text}</a>"
+def save_base64_image(image):
+    buffered = BytesIO()
+    Image.fromarray(image.astype(np.uint8)).save(buffered, format="PNG")
+    encoded_image = base64.b64encode(buffered.getvalue()).decode()
+    return encoded_image
+
+def get_download_link(encoded_image, text):
+    href = f"<a href='data:file/png;base64,{encoded_image}' download='encrypted_image.png'>{text}</a>"
     return href
 
 if __name__ == "__main__":
