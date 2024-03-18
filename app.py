@@ -32,12 +32,19 @@ def main():
         st.subheader('Decryption')
         st.info("Use the same keys and the encrypted image to decrypt.")
 
+from PIL import Image
+import numpy as np
+from ImageCryptography import *
+
 def encrypt_decrypt_and_show_image(uploaded_file, public_key):
     # Open the uploaded image
     input_image = Image.open(uploaded_file)
 
     # Perform encryption
     encrypted_image = ImgEncrypt(public_key, input_image)
+
+    # Convert encrypted image to Pillow Image
+    encrypted_image = Image.fromarray(encrypted_image.astype(np.uint8))
 
     # Save the encrypted image
     encrypted_image_path = 'encrypted_image.png'
@@ -51,6 +58,7 @@ def encrypt_decrypt_and_show_image(uploaded_file, public_key):
     decrypted_image.save(decrypted_image_path)
 
     return encrypted_image_path, decrypted_image_path
+
 
 def get_download_link(file_path, text):
     with open(file_path, "rb") as file:
