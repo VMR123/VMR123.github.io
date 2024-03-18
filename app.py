@@ -3,69 +3,55 @@ from PIL import Image
 from ImageCryptography import *
 
 def main():
-    st.title('Image Cryptography')
+    st.title("Image Encryption and Decryption")
 
-    # Generate keys
-    public_key, private_key = Paillier.generate_keys()
+    uploaded_file = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
 
-    # Display keys
-    st.header('Public Key:')
-    st.write(public_key)
-    st.header('Private Key:')
-    st.write(private_key)
+    if uploaded_file is not None:
+        # Display the uploaded image
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-    # Upload image for encryption
-    st.subheader('Encryption')
-    uploaded_file = st.file_uploader("Upload image for encryption", type=['png', 'jpg', 'jpeg'])
+        if st.button("Encrypt Image"):
+            # Generate Paillier keys
+            public_key, private_key = Paillier.generate_keys()
 
-    if uploaded_file:
-        # Perform encryption
-        encrypted_image_path, decrypted_image_path = encrypt_decrypt_and_show_image(uploaded_file, public_key)
+            # Perform encryption
+            encrypted_image = encrypt_image(uploaded_file, public_key)
 
-        # Display encrypted image
-        st.image(encrypted_image_path, caption='Encrypted Image', use_column_width=True)
+            # Save encrypted image
+            encrypted_image_path = "encrypted_image.png"
+            encrypted_image.save(encrypted_image_path)
+            st.success("Image encrypted successfully.")
 
-        # Download link for encrypted image
-        st.markdown(get_download_link(encrypted_image_path, 'Download Encrypted Image'), unsafe_allow_html=True)
+            # Provide download link for encrypted image
+            st.markdown(get_download_link(encrypted_image_path, "Download Encrypted Image"), unsafe_allow_html=True)
 
-        # Display decryption section
-        st.subheader('Decryption')
-        st.info("Use the same keys and the encrypted image to decrypt.")
+            if st.button("Decrypt Image"):
+                # Perform decryption
+                decrypted_image = decrypt_image(encrypted_image, private_key)
 
-from PIL import Image
-import numpy as np
-from ImageCryptography import *
+                # Save decrypted image
+                decrypted_image_path = "decrypted_image.png"
+                decrypted_image.save(decrypted_image_path)
+                st.success("Image decrypted successfully.")
 
-def encrypt_decrypt_and_show_image(uploaded_file, public_key):
-    # Open the uploaded image
-    input_image = Image.open(uploaded_file)
+                # Provide download link for decrypted image
+                st.markdown(get_download_link(decrypted_image_path, "Download Decrypted Image"), unsafe_allow_html=True)
 
-    # Perform encryption
-    encrypted_image = ImgEncrypt(public_key, input_image)
+def encrypt_image(input_image, public_key):
+    image = Image.open(input_image)
+    encrypted_image = ImgEncrypt(public_key, image)
+    return encrypted_image
 
-    # Convert encrypted image to Pillow Image
-    encrypted_image = Image.fromarray(encrypted_image.astype(np.uint8))
-
-    # Save the encrypted image
-    encrypted_image_path = 'encrypted_image.png'
-    encrypted_image.save(encrypted_image_path)
-
-    # Perform decryption (for demonstration purposes)
+def decrypt_image(encrypted_image, private_key):
     decrypted_image = ImgDecrypt(public_key, private_key, encrypted_image)
-
-    # Save the decrypted image
-    decrypted_image_path = 'decrypted_image.png'
-    decrypted_image.save(decrypted_image_path)
-
-    return encrypted_image_path, decrypted_image_path
-
+    return decrypted_image
 
 def get_download_link(file_path, text):
     with open(file_path, "rb") as file:
         data = file.read()
-    b64 = base64.b64encode(data).decode()
-    href = f'<a href="data:file/png;base64,{b64}" download="{file_path}">{text}</a>'
+    href = f"<a href='data:file/png;base64,{data.decode('utf-8')}' download='{file_path}'>{text}</a>"
     return href
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
