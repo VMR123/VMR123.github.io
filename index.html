@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Image Encryption using Paillier's Encryption Scheme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 20px; 
+            background-color: #fff;
+        }
+        section {
+            padding: 10px;
+            margin: 10px auto;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #090e14;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        .disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://upload.wikimedia.org/wikipedia/en/c/cc/NITK_Emblem.png" alt="Institute Logo" class=" logo" style="max-width: 150px;">
+        <h1>IT352 - Information Assurance and Security Course Project</h1>
+        <p><em>Medical Image Encryption using Paillier's Encryption Scheme</em></p>
+    </header>
+
+    <!-- Encryption Section -->
+    <section id="encrypt">
+        <h2>Encryption</h2>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">
+            <div class="button-container">
+                <button type="submit">Encrypt Image</button>
+                <button id="copy-keys">Copy Keys</button>
+            </div>
+        </form>
+        {% if encrypted_image %}
+        <h3>Encrypted Image</h3>
+        <img src="{{ encrypted_image }}" alt="Encrypted Image">
+        <p><a href="/download/{{ encrypted_image }}" style="color: #007bff;">Download Encrypted Image</a></p>
+        {% endif %}
+    </section>
+
+    <!-- Decryption Section -->
+    <section id="decrypt">
+        <h2>Decryption</h2>
+        <input type="text" id="keys" placeholder="Paste Keys Here">
+        <form>
+            <input type="file" id="decrypt-file">
+            <div class="button-container">
+                <button type="button" id="decrypt-button" class="disabled">Decrypt Image</button>
+            </div>
+        </form>
+        {% if decrypted_image %}
+        <h3>Decrypted Image</h3>
+        <img src="{{ decrypted_image }}" alt="Decrypted Image">
+        <p><a href="/download/{{ decrypted_image }}" style="color: #007bff;">Download Decrypted Image</a></p>
+        {% endif %}
+    </section>
+
+    <div class="footer">
+        <p>Done under the guidance of Prof. Jaidhar CD</p>
+        <p>By: <br>Suresh Naik (211IT016) <br>Prasanna Kumar(211IT047) <br>Vishwa Mohan Reddy G (211IT082)</p>
+    </div>
+
+    <script>
+        document.getElementById('copy-keys').addEventListener('click', function(event) {
+            // Copy public and private keys to clipboard
+            var keys = "Public Key: " + "{{ public_key }}" + "\nPrivate Key: " + "{{ private_key }}";
+            navigator.clipboard.writeText(keys)
+                .then(() => {
+                    alert("Keys copied to clipboard!");
+                })
+                .catch(err => {
+                    console.error('Failed to copy keys: ', err);
+                });
+        });
+    </script>
+</body>
+</html>
