@@ -23,7 +23,7 @@ def main():
 
                 # Save encrypted image
                 encrypted_image_path = "encrypted_image.png"
-                Image.fromarray(encrypted_image).save(encrypted_image_path)
+                Image.fromarray(encrypted_image.astype(np.uint8)).save(encrypted_image_path)
                 st.success("Image encrypted successfully.")
 
                 # Provide download link for encrypted image
@@ -37,7 +37,7 @@ def main():
 
                 # Save decrypted image
                 decrypted_image_path = "decrypted_image.png"
-                Image.fromarray(decrypted_image).save(decrypted_image_path)
+                Image.fromarray(decrypted_image.astype(np.uint8)).save(decrypted_image_path)
                 st.success("Image decrypted successfully.")
 
                 # Provide download link for decrypted image
