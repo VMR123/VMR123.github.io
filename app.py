@@ -45,7 +45,8 @@ def main():
 
 def encrypt_image(input_image, public_key):
     image = Image.open(input_image)
-    encrypted_image = ImgEncrypt(public_key, image)
+    image_array = np.array(image)
+    encrypted_image = ImgEncrypt(public_key, image_array)
     return encrypted_image
 
 def decrypt_image(encrypted_image, private_key):
