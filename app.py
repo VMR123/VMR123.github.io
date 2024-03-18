@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+import numpy as np
 from ImageCryptography import *
 
 def main():
@@ -22,7 +23,7 @@ def main():
 
                 # Save encrypted image
                 encrypted_image_path = "encrypted_image.png"
-                encrypted_image.save(encrypted_image_path)
+                Image.fromarray(encrypted_image).save(encrypted_image_path)
                 st.success("Image encrypted successfully.")
 
                 # Provide download link for encrypted image
@@ -36,7 +37,7 @@ def main():
 
                 # Save decrypted image
                 decrypted_image_path = "decrypted_image.png"
-                decrypted_image.save(decrypted_image_path)
+                Image.fromarray(decrypted_image).save(decrypted_image_path)
                 st.success("Image decrypted successfully.")
 
                 # Provide download link for decrypted image
@@ -54,7 +55,7 @@ def decrypt_image(encrypted_image, private_key):
 def get_download_link(file_path, text):
     with open(file_path, "rb") as file:
         data = file.read()
-    href = f"<a href='data:file/png;base64,{data.decode('utf-8')}' download='{file_path}'>{text}</a>"
+    href = f"<a href='data:file/png;base64,{data.decode('latin-1')}' download='{file_path}'>{text}</a>"
     return href
 
 if __name__ == "__main__":
