@@ -11,22 +11,26 @@ def main():
         # Display the uploaded image
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
-        if st.button("Encrypt Image"):
-            # Generate Paillier keys
-            public_key, private_key = Paillier.generate_keys()
+        encrypt_button = st.button("Encrypt Image")
+        if encrypt_button:
+            with st.spinner("Encrypting..."):
+                # Generate Paillier keys
+                public_key, private_key = Paillier.generate_keys()
 
-            # Perform encryption
-            encrypted_image = encrypt_image(uploaded_file, public_key)
+                # Perform encryption
+                encrypted_image = encrypt_image(uploaded_file, public_key)
 
-            # Save encrypted image
-            encrypted_image_path = "encrypted_image.png"
-            encrypted_image.save(encrypted_image_path)
-            st.success("Image encrypted successfully.")
+                # Save encrypted image
+                encrypted_image_path = "encrypted_image.png"
+                encrypted_image.save(encrypted_image_path)
+                st.success("Image encrypted successfully.")
 
-            # Provide download link for encrypted image
-            st.markdown(get_download_link(encrypted_image_path, "Download Encrypted Image"), unsafe_allow_html=True)
+                # Provide download link for encrypted image
+                st.markdown(get_download_link(encrypted_image_path, "Download Encrypted Image"), unsafe_allow_html=True)
 
-            if st.button("Decrypt Image"):
+        decrypt_button = st.button("Decrypt Image")
+        if decrypt_button:
+            with st.spinner("Decrypting..."):
                 # Perform decryption
                 decrypted_image = decrypt_image(encrypted_image, private_key)
 
