@@ -121,31 +121,33 @@ def save_and_show_encrypted_img(cipherimg, filename):
 
     return filepath, visual_filepath
 
-def encrypt_decrypt_and_show_image(input_image_path):
-    # Step 1: Generate Paillier keys
-    public_key, private_key = Paillier.generate_keys()
+from PIL import Image
+import numpy as np
+from ImageCryptography import *
 
-    # Step 2: Open the input image
-    input_image = Image.open(input_image_path)
+def encrypt_decrypt_and_show_image(uploaded_file, public_key):
+    # Open the uploaded image
+    input_image = Image.open(uploaded_file)
 
-    # Step 3: Encrypt the image
+    # Perform encryption
     encrypted_image = ImgEncrypt(public_key, input_image)
 
-    # Step 4: Save the encrypted image
-    encrypted_image_path = 'encrypted_image.pkl'
-    save_and_show_encrypted_img(encrypted_image, encrypted_image_path)
+    # Convert encrypted image to Pillow Image
+    encrypted_image = Image.fromarray(encrypted_image.astype(np.uint8))
 
-    # Step 5: Decrypt the encrypted image
+    # Save the encrypted image
+    encrypted_image_path = 'encrypted_image.png'
+    encrypted_image.save(encrypted_image_path)
+
+    # Perform decryption (for demonstration purposes)
     decrypted_image = ImgDecrypt(public_key, private_key, encrypted_image)
 
-    # Step 6: Save the decrypted image
+    # Save the decrypted image
     decrypted_image_path = 'decrypted_image.png'
     decrypted_image.save(decrypted_image_path)
 
-    # Step 7: Show the decrypted image
-    decrypted_image.show()
-
     return encrypted_image_path, decrypted_image_path
+
 
 
 def encrypt_and_show_image(input_image_path,public_key):
