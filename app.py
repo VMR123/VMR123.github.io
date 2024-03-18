@@ -61,7 +61,8 @@ def decrypt_image(encrypted_image, public_key, private_key):
 
 def save_base64_image(image):
     buffered = BytesIO()
-    Image.fromarray(image.astype(np.uint8)).save(buffered, format="PNG")
+    image_pil = Image.fromarray(image.astype(np.uint8))
+    image_pil.save(buffered, format="PNG")
     encoded_image = base64.b64encode(buffered.getvalue()).decode()
     return encoded_image
 
